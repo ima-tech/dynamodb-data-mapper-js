@@ -1,9 +1,8 @@
+import {AttributeMap, AttributeValue} from "aws-sdk/clients/dynamodb";
 import {BinarySet, BinaryValue} from "./BinarySet";
 import {isArrayBuffer} from "./isArrayBuffer";
 import {NumberValue} from "./NumberValue";
 import {NumberValueSet} from "./NumberValueSet";
-import {AttributeValue} from "@aws-sdk/client-dynamodb";
-
 
 export const EmptyHandlingStrategies = {
     omit: 'omit',
@@ -108,10 +107,10 @@ export class Marshaller {
     private readonly unwrapNumbers: boolean;
 
     constructor({
-        onEmpty = 'leave',
-        onInvalid = 'throw',
-        unwrapNumbers = false
-    }: MarshallingOptions = {}) {
+                    onEmpty = 'leave',
+                    onInvalid = 'throw',
+                    unwrapNumbers = false
+                }: MarshallingOptions = {}) {
         this.onEmpty = onEmpty;
         this.onInvalid = onInvalid;
         this.unwrapNumbers = unwrapNumbers;
@@ -121,7 +120,7 @@ export class Marshaller {
      * Convert a JavaScript object with string keys and arbitrary values into an
      * object with string keys and DynamoDB AttributeValue objects as values.
      */
-    public marshallItem(item: {[key: string]: any}): { [key: string]: AttributeValue } {
+    public marshallItem(item: {[key: string]: any}): AttributeMap {
         const value = this.marshallValue(item);
         if (!(value && value.M) && this.onInvalid === 'throw') {
             throw new Error(
@@ -166,7 +165,7 @@ export class Marshaller {
      * AttributeValue values) to an object with string keys and native
      * JavaScript values.
      */
-    public unmarshallItem(item: { [key: string]: AttributeValue }): UnmarshalledMapAttributeValue {
+    public unmarshallItem(item: AttributeMap): UnmarshalledMapAttributeValue {
         return this.unmarshallValue({M: item}) as UnmarshalledMapAttributeValue;
     }
 
@@ -269,6 +268,10 @@ export class Marshaller {
             return this.marshallList(value);
         }
 
+        if (isDate(value)) {
+            return this.marshallDate(value as Date);
+        }
+
         return this.marshallObject(value);
     }
 
@@ -280,6 +283,10 @@ export class Marshaller {
         if (this.onEmpty === 'nullify') {
             return {NULL: true};
         }
+    }
+
+    private marshallDate(date: Date): AttributeValue {
+        return {N: Math.floor(date.valueOf() / 1000).toString(10)};
     }
 
     private marshallList(list: Iterable<any>): AttributeValue {
@@ -319,7 +326,7 @@ export class Marshaller {
     private marshallObject(object: {[key: string]: any}): AttributeValue {
         return {
             M: Object.keys(object).reduce(
-                (map: { [key: string]: AttributeValue }, key: string): { [key: string]: AttributeValue } => {
+                (map: AttributeMap, key: string): AttributeMap => {
                     const marshalled = this.marshallValue(object[key]);
                     if (marshalled) {
                         map[key] = marshalled;
@@ -380,8 +387,6 @@ export class Marshaller {
         }
 
         if (values.length > 0 || this.onEmpty === 'leave') {
-            // I get the idea but there's an issue here where it's possible we are missing some required fields.
-            // @ts-ignore
             return {[tag]: values};
         }
 
@@ -425,6 +430,10 @@ function isBinaryEmpty(arg: BinaryValue): boolean {
 
 function isBinaryValue(arg: any): arg is BinaryValue {
     return ArrayBuffer.isView(arg) || isArrayBuffer(arg);
+}
+
+function isDate(date: any) {
+    return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
 }
 
 function isIterable(arg: any): arg is Iterable<any> {
