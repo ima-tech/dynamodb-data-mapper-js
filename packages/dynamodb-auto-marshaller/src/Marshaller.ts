@@ -1,9 +1,8 @@
+import {AttributeValue} from "@aws-sdk/client-dynamodb";
 import {BinarySet, BinaryValue} from "./BinarySet";
 import {isArrayBuffer} from "./isArrayBuffer";
 import {NumberValue} from "./NumberValue";
 import {NumberValueSet} from "./NumberValueSet";
-import {AttributeValue} from "@aws-sdk/client-dynamodb";
-
 
 export const EmptyHandlingStrategies = {
     omit: 'omit',
@@ -108,10 +107,10 @@ export class Marshaller {
     private readonly unwrapNumbers: boolean;
 
     constructor({
-        onEmpty = 'leave',
-        onInvalid = 'throw',
-        unwrapNumbers = false
-    }: MarshallingOptions = {}) {
+                    onEmpty = 'leave',
+                    onInvalid = 'throw',
+                    unwrapNumbers = false
+                }: MarshallingOptions = {}) {
         this.onEmpty = onEmpty;
         this.onInvalid = onInvalid;
         this.unwrapNumbers = unwrapNumbers;
@@ -269,6 +268,10 @@ export class Marshaller {
             return this.marshallList(value);
         }
 
+        if (isDate(value)) {
+            return this.marshallDate(value as Date);
+        }
+
         return this.marshallObject(value);
     }
 
@@ -280,6 +283,10 @@ export class Marshaller {
         if (this.onEmpty === 'nullify') {
             return {NULL: true};
         }
+    }
+
+    private marshallDate(date: Date): AttributeValue {
+        return {N: Math.floor(date.valueOf() / 1000).toString(10)};
     }
 
     private marshallList(list: Iterable<any>): AttributeValue {
@@ -425,6 +432,10 @@ function isBinaryEmpty(arg: BinaryValue): boolean {
 
 function isBinaryValue(arg: any): arg is BinaryValue {
     return ArrayBuffer.isView(arg) || isArrayBuffer(arg);
+}
+
+function isDate(date: any) {
+    return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
 }
 
 function isIterable(arg: any): arg is Iterable<any> {
