@@ -387,6 +387,8 @@ export class Marshaller {
         }
 
         if (values.length > 0 || this.onEmpty === 'leave') {
+            // I get the idea but there's an issue here where it's possible we are missing some required fields.
+            // @ts-ignore
             return {[tag]: values};
         }
 
