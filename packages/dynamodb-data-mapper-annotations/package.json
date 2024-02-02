@@ -34,6 +34,7 @@
     "@awslabs-community-fork/dynamodb-auto-marshaller": "^0.7.14",
     "@awslabs-community-fork/dynamodb-data-mapper": "^0.7.14",
     "@awslabs-community-fork/dynamodb-data-marshaller": "^0.7.14",
+    "@pristine-ts/metadata": "^1.0.6",
     "reflect-metadata": "^0.1.13",
     "tslib": "^2.1.0",
     "uuid": "^3.0.0"

@@ -10,6 +10,7 @@ import {
     SchemaType,
     SetType
 } from "@awslabs-community-fork/dynamodb-data-marshaller";
+import {PropertyMetadata} from "@pristine-ts/metadata";
 
 /**
  * Declare a property in a TypeScript class to be part of a DynamoDB schema.
@@ -60,6 +61,9 @@ export function attribute(
     parameters: Partial<SchemaType> = {}
 ): PropertyAnnotation {
     return (target, propertyKey) => {
+        // Mark the property as seen for @pristine-ts/metadata to automatically register the types.
+        PropertyMetadata.propertySeen(target, propertyKey);
+
         if (!Object.prototype.hasOwnProperty.call(target, DynamoDbSchema)) {
             Object.defineProperty(
                 target,
