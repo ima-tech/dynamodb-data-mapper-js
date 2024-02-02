@@ -143,7 +143,7 @@ describe('attribute', () => {
                 decorator(target, 'property');
 
                 const reflectionCalls = (Reflect.getMetadata as any).mock.calls;
-                expect(reflectionCalls.length).toBe(1);
+                expect(reflectionCalls.length).toBe(2);
                 expect(reflectionCalls[0][0]).toBe(METADATA_TYPE_KEY);
                 expect(reflectionCalls[0][1]).toBe(target);
                 expect(reflectionCalls[0][2]).toBe('property');
@@ -153,7 +153,7 @@ describe('attribute', () => {
         it(
             `should recognize values with a constructor of String as a string`,
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => String);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => String);
 
                 const decorator = attribute();
                 const target = Object.create(null);
@@ -167,7 +167,7 @@ describe('attribute', () => {
         it(
             `should recognize values with a constructor of Number as a number`,
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => Number);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => Number);
 
                 const decorator = attribute();
                 const target = Object.create(null);
@@ -181,7 +181,7 @@ describe('attribute', () => {
         it(
             `should recognize values with a constructor of Boolean as a boolean`,
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => Boolean);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => Boolean);
 
                 const decorator = attribute();
                 const target = Object.create(null);
@@ -195,7 +195,7 @@ describe('attribute', () => {
         it(
             `should recognize values with a constructor of Date as a date`,
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => Date);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => Date);
 
                 const decorator = attribute();
                 const target = Object.create(null);
@@ -210,7 +210,7 @@ describe('attribute', () => {
             `should recognize values with a constructor that subclasses Date as a date`,
             () => {
                 class MyDate extends Date {}
-                (Reflect.getMetadata as any).mockImplementation(() => MyDate);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => MyDate);
 
                 const decorator = attribute();
                 const target = Object.create(null);
@@ -224,7 +224,7 @@ describe('attribute', () => {
         it(
             `should recognize values with a constructor of BinarySet as a set of binary values`,
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => BinarySet);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => BinarySet);
 
                 const decorator = attribute();
                 const target = Object.create(null);
@@ -239,7 +239,7 @@ describe('attribute', () => {
             `should recognize values with a constructor that subclasses BinarySet as a set of binary values`,
             () => {
                 class MyBinarySet extends BinarySet {}
-                (Reflect.getMetadata as any).mockImplementation(() => MyBinarySet);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => MyBinarySet);
 
                 const decorator = attribute();
                 const target = Object.create(null);
@@ -253,7 +253,7 @@ describe('attribute', () => {
         it(
             `should recognize values with a constructor of NumberValueSet as a set of number values`,
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => NumberValueSet);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => NumberValueSet);
 
                 const decorator = attribute();
                 const target = Object.create(null);
@@ -268,7 +268,7 @@ describe('attribute', () => {
             `should recognize values with a constructor that subclasses NumberValueSet as a set of number values`,
             () => {
                 class MyNumberValueSet extends NumberValueSet {}
-                (Reflect.getMetadata as any).mockImplementation(() => MyNumberValueSet);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => MyNumberValueSet);
 
                 const decorator = attribute();
                 const target = Object.create(null);
@@ -280,7 +280,7 @@ describe('attribute', () => {
         );
 
         it(`should recognize values with a constructor of Set as a set`, () => {
-            (Reflect.getMetadata as any).mockImplementation(() => Set);
+            (Reflect.getMetadata as any).mockImplementationOnce(() => Set);
 
             const decorator = attribute({memberType: 'String'});
             const target = Object.create(null);
@@ -294,7 +294,7 @@ describe('attribute', () => {
             `should recognize values with a constructor that subclasses Set as a set`,
             () => {
                 class MySet extends Set {}
-                (Reflect.getMetadata as any).mockImplementation(() => MySet);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => MySet);
 
                 const decorator = attribute({memberType: 'Number'});
                 const target = Object.create(null);
@@ -308,7 +308,7 @@ describe('attribute', () => {
         it(
             `should throw on values with a constructor of Set that lack a memberType declaration`,
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => Set);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => Set);
 
                 const decorator = attribute();
                 expect(() => decorator({}, 'property'))
@@ -317,7 +317,7 @@ describe('attribute', () => {
         );
 
         it(`should recognize values with a constructor of Map as a map`, () => {
-            (Reflect.getMetadata as any).mockImplementation(() => Map);
+            (Reflect.getMetadata as any).mockImplementationOnce(() => Map);
             const memberType: SchemaType = {
                 type: 'Document',
                 members: {},
@@ -335,7 +335,7 @@ describe('attribute', () => {
             `should recognize values with a constructor that subclasses Map as a map`,
             () => {
                 class MyMap extends Map {}
-                (Reflect.getMetadata as any).mockImplementation(() => MyMap);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => MyMap);
                 const memberType: SchemaType = {
                     type: 'Tuple',
                     members: [
@@ -356,7 +356,7 @@ describe('attribute', () => {
         it(
             `should throw on values with a constructor of Map that lack a memberType declaration`,
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => Map);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => Map);
 
                 const decorator = attribute();
                 expect(() => decorator({}, 'property'))
@@ -373,7 +373,7 @@ describe('attribute', () => {
                     }
                 }
 
-                (Reflect.getMetadata as any).mockImplementation(() => Document);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => Document);
                 const decorator = attribute();
                 const target = Object.create(null);
                 decorator(target, 'property');
@@ -387,7 +387,7 @@ describe('attribute', () => {
         );
 
         it('should treat arrays as collection types', () => {
-            (Reflect.getMetadata as any).mockImplementation(() => Array);
+            (Reflect.getMetadata as any).mockImplementationOnce(() => Array);
             const decorator = attribute();
             const target = Object.create(null);
             decorator(target, 'property');
@@ -400,7 +400,7 @@ describe('attribute', () => {
         it(
             'should treat arrays with a declared memberType as list types',
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => Array);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => Array);
 
                 const memberType: SchemaType = {type: 'String'};
                 const decorator = attribute({memberType});
@@ -417,7 +417,7 @@ describe('attribute', () => {
         it(
             'should treat arrays with members as tuple types',
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => Array);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => Array);
 
                 const members: Array<SchemaType> = [
                     {type: 'Boolean'},
@@ -438,7 +438,7 @@ describe('attribute', () => {
             'should constructors that descend from Array as collection types',
             () => {
                 class MyArray extends Array {}
-                (Reflect.getMetadata as any).mockImplementation(() => MyArray);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => MyArray);
                 const decorator = attribute();
                 const target = Object.create(null);
                 decorator(target, 'property');
@@ -452,7 +452,7 @@ describe('attribute', () => {
         it(
             'should treat values with an unrecognized constructor as an "Any" type',
             () => {
-                (Reflect.getMetadata as any).mockImplementation(() => Object);
+                (Reflect.getMetadata as any).mockImplementationOnce(() => Object);
                 const decorator = attribute();
                 const target = Object.create(null);
                 decorator(target, 'property');

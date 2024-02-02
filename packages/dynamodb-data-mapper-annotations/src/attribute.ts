@@ -61,8 +61,7 @@ export function attribute(
     parameters: Partial<SchemaType> = {}
 ): PropertyAnnotation {
     return (target, propertyKey) => {
-        // Mark the property as seen for @pristine-ts/metadata to automatically register the types.
-        PropertyMetadata.propertySeen(target, propertyKey);
+
 
         if (!Object.prototype.hasOwnProperty.call(target, DynamoDbSchema)) {
             Object.defineProperty(
@@ -96,6 +95,9 @@ export function attribute(
         }
 
         (target as any)[DynamoDbSchema][propertyKey] = schemaType;
+
+        // Mark the property as seen for @pristine-ts/metadata to automatically register the types.
+        PropertyMetadata.propertySeen(target, propertyKey);
     };
 }
 
